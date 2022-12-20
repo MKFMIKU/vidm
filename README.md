@@ -16,5 +16,34 @@
 ## Network Architecture
 <img src = "https://i.imgur.com/1mxuYjP.png"> 
 
-## Training and Evaluation
-Coming Soon Stay tuned!!!
+
+## Installation
+The model is built in PyTorch 1.8.0 with Python3.8 and CUDA11.6.
+
+For installing, follow these intructions
+```bash
+# install the guided_diffusion dependencies according to https://github.com/openai/guided-diffusion
+
+git clone https://github.com/openai/guided-diffusion.git
+cd guided-diffusion
+pip install -e .
+```
+
+## Training
+
+1. To download [CLEVRER dataset](http://clevrer.csail.mit.edu/) and split videos into frames, run
+
+```bash
+chmod a+x scripts/download_clevr_dataset.sh
+./scripts/download_clevr_dataset.sh
+
+python scripts/preprocess_clevr_dataset.py
+```
+
+2. To train VIDM and motion latent encoder with default settings, run
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multiprocessing-distributed --world-size 1 --rank 0 --batch-size 48 --workers 24
+```
+
+**Note:** The above training script uses all GPUs by default. You can control the to-be-used GPUs by setting the `CUDA_VISIBLE_DEVICES` variable. The `batch-szie` and `workers` are the total numbers, which will be divied by the number of GPUs inner the training script.

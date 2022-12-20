@@ -1,7 +1,7 @@
-import os
-DATASETS = os.getenv('DATASETS')
+DATASETS = 
 EXPERIMENTS = os.getenv('EXPERIMENTS')
 
+import os
 import builtins
 import time
 import copy
