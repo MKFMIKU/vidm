@@ -22,20 +22,31 @@ The model is built in PyTorch 1.8.0 with Python3.8 and CUDA11.6.
 
 For installing, follow these intructions
 ```bash
-# instal pytorch according to https://pytorch.org/
-pip3 install torch torchvision torchaudio
+# get the development directory
+git clone git@github.com:MKFMIKU/VIDM.git
+cd VIDM
 
 # install the required packages
 conda env create -p envs --file environment.yml
 conda activate ./envs/
 
-# install the development directory
-pip3 install -e .
+# instal pytorch according to https://pytorch.org/
+pip3 install torch torchvision torchaudio
 
 # install the guided_diffusion in its P2-weighting variant according to https://github.com/jychoi118/P2-weighting
 git clone https://github.com/jychoi118/P2-weighting.git
 cd P2-weighting
 pip install -e .
+
+# install the mmmmediting according to https://github.com/open-mmlab/mmediting#installation
+pip3 install openmim
+mim install mmcv-full
+git clone https://github.com/open-mmlab/mmediting.git
+cd mmediting
+pip3 install -e .
+
+# install the development directory
+pip3 install -e .
 ```
 
 ## Training
@@ -67,5 +78,5 @@ curl https://www.cis.jhu.edu/~kmei1/share/vidm/checkpoints/checkpoint_accum_clev
 
 3. Testing
 ```bash
-
+CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multiprocessing-distributed --world-size 1 --rank 0 --batch-size 48 --workers 24
 ```
