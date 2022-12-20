@@ -3,10 +3,10 @@ import os
 import numpy as np
 from tqdm import tqdm
 
-path_list = ['./train_vid/', './val_vid/']
-save_path_list = ['./train', './val' ]
+path_list = ['data/CLEVRER/train_vid/', 'data/CLEVRER/val_vid/']
+save_path_list = ['data/CLEVRER/train', 'data/CLEVRER/val' ]
 
-for i in range(2):
+for i in range(2)[1:]:
     path = path_list[i]
     save_path = save_path_list[i]
 

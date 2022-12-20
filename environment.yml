@@ -1,0 +1,16 @@
+name: base
+channels:
+  - defaults
+dependencies:
+  - conda
+  - python=3.8
+  - conda-env
+  - conda-build
+  - conda-verify
+  - _ipyw_jlab_nb_ext_conf
+  - anaconda==2021.05=py38_0
+  - anaconda-navigator
+  - navigator-updater
+  - gcc_linux-64=7.3.0
+  - gxx_linux-64=7.3.0
+prefix: /home/viu/anaconda3

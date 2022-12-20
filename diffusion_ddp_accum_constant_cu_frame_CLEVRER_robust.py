@@ -1,6 +1,5 @@
-DATASETS = 
-EXPERIMENTS = os.getenv('EXPERIMENTS')
-
+DATASETS = 'data/CLEVRER'
+EXPERIMENTS = 'experiment'
 import os
 import builtins
 import time

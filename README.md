@@ -1,4 +1,4 @@
-# VIDM: Video Implicit Diffusion Models(AAAI 2023)
+# VIDM: Video Implicit Diffusion Models
 
 [Kangfu Mei](https://kfmei.page/) and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/vishal-patel/), Johns Hopkins University, MD, USA
 
@@ -22,10 +22,19 @@ The model is built in PyTorch 1.8.0 with Python3.8 and CUDA11.6.
 
 For installing, follow these intructions
 ```bash
-# install the guided_diffusion dependencies according to https://github.com/openai/guided-diffusion
+# instal pytorch according to https://pytorch.org/
+pip3 install torch torchvision torchaudio
 
-git clone https://github.com/openai/guided-diffusion.git
-cd guided-diffusion
+# install the required packages
+conda env create -p envs --file environment.yml
+conda activate ./envs/
+
+# install the development directory
+pip3 install -e .
+
+# install the guided_diffusion in its P2-weighting variant according to https://github.com/jychoi118/P2-weighting
+git clone https://github.com/jychoi118/P2-weighting.git
+cd P2-weighting
 pip install -e .
 ```
 
@@ -36,8 +45,6 @@ pip install -e .
 ```bash
 chmod a+x scripts/download_clevr_dataset.sh
 ./scripts/download_clevr_dataset.sh
-
-python scripts/preprocess_clevr_dataset.py
 ```
 
 2. To train VIDM and motion latent encoder with default settings, run
@@ -47,3 +54,18 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multipr
 ```
 
 **Note:** The above training script uses all GPUs by default. You can control the to-be-used GPUs by setting the `CUDA_VISIBLE_DEVICES` variable. The `batch-szie` and `workers` are the total numbers, which will be divied by the number of GPUs inner the training script.
+
+
+## Evaluation
+
+1. Download the pre-trained model and place it in ./pretrained_models/
+```bash
+curl https://www.cis.jhu.edu/~kmei1/share/vidm/checkpoints/checkpoint_accum_clevrer_robust_400000.pth.tar -o pretrained_models/checkpoint_accum_clevrer_robust_400000.pth.tar
+```
+
+2. Generate video contents or using the extracted first video frames
+
+3. Testing
+```bash
+
+```
