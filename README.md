@@ -37,6 +37,7 @@ pip3 install torch torchvision torchaudio
 git clone https://github.com/jychoi118/P2-weighting.git
 cd P2-weighting
 pip install -e .
+cd ../
 
 # install the mmmmediting according to https://github.com/open-mmlab/mmediting#installation
 pip3 install openmim
@@ -44,6 +45,7 @@ mim install mmcv-full
 git clone https://github.com/open-mmlab/mmediting.git
 cd mmediting
 pip3 install -e .
+cd ../
 
 # install the development directory
 pip3 install -e .
@@ -79,4 +81,9 @@ curl https://www.cis.jhu.edu/~kmei1/share/vidm/checkpoints/checkpoint_accum_clev
 3. Testing
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multiprocessing-distributed --world-size 1 --rank 0 --batch-size 48 --workers 24
+```
+
+3. Evaluation with FVD metric. It uses the first GPU card as default, which can changed by setting `CUDA_VISIBLE_DEVICES`.
+```bash
+python evaluate_FVD.py -dir1 path/to/a/ -dir2 path/to/b/ -b 2 -r 256 -n 128 -ns 2038 -i3d ./i3d_torchscript.pt
 ```

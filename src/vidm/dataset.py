@@ -556,3 +556,129 @@ class ImageFolderDataset(Dataset):
 
     def __len__(self):
         return self._total_size
+
+
+import os
+
+from typing import Any, List, Optional, Tuple, Union
+
+import av
+import PIL
+import numpy as np
+
+import torch
+from torch.utils.data import Dataset
+
+
+class VideoFolder(Dataset):
+    IMG_EXTENSIONS = [
+        ".png",
+        ".PNG",
+    ]
+    VIDEO_EXTENSIONS = [
+        ".mp4",
+        ".MP4",
+    ]
+
+    def __init__(
+        self,
+        path: str,
+        size: List[int],
+        nframes: int = 128,
+    ):
+        if isinstance(size, (list, tuple)):
+            if len(size) not in [1, 2]:
+                raise ValueError(
+                    f"Size must be an int or a 1 or 2 element tuple/list, not a {len(size)} element tuple/list"
+                )
+
+        if isinstance(size, int):
+            size = [size, size]
+
+        _path = path
+
+        _all_fnames = {
+            os.path.relpath(os.path.join(root, fname), start=_path)
+            for root, _dirs, files in os.walk(_path)
+            for fname in files
+        }
+        _video_fnames = sorted(
+            fname
+            for fname in _all_fnames
+            if self._file_ext(fname) in self.VIDEO_EXTENSIONS
+        ) + sorted(
+            list(
+                set(
+                    (
+                        os.path.dirname(fname)
+                        for fname in _all_fnames
+                        if self._file_ext(fname) in self.IMG_EXTENSIONS
+                    )
+                )
+            )
+        )
+        _video_fnames = sorted(_video_fnames)
+
+        self.path = path
+        self.size = size
+        self.nframes = nframes
+
+        self._video_fnames = _video_fnames
+        self._total_size = len(self._video_fnames)
+
+    @staticmethod
+    def _file_ext(fname):
+        return os.path.splitext(fname)[1].lower()
+
+    def __getitem__(self, index):
+        video_path = os.path.join(self.path, self._video_fnames[index])
+        video = []
+
+        if os.path.isdir(video_path):
+            _all_fnames = {
+                os.path.relpath(os.path.join(root, fname), start=video_path)
+                for root, _dirs, files in os.walk(video_path)
+                for fname in files
+            }
+            _video_fnames = sorted(
+                fname
+                for fname in _all_fnames
+                if self._file_ext(fname) in self.IMG_EXTENSIONS
+            )
+
+            for fname in _video_fnames:
+                with open(os.path.join(video_path, fname), "rb") as f:
+                    video.append(
+                        np.array(
+                            PIL.Image.open(f)
+                            .convert("RGB")
+                            .resize(
+                                self.size, resample=3
+                            )  # PIL.Image.Resampling.LANCZOS = 1 PIL.Image.Resampling.BICUBIC = 3
+                        )
+                    )
+        else:
+            container = av.open(video_path)
+            container.streams.video[0].thread_type = "AUTO"
+
+            total_frames = container.streams.video[0].frames
+            frame_scale = total_frames / self.nframes
+            frame_scaled_idxs = [int(i * frame_scale) for i in range(total_frames)]
+
+            for idx, frame in enumerate(container.decode(video=0)):
+                if idx in frame_scaled_idxs:
+                    video.append(
+                        np.asarray(
+                            frame.to_image()
+                            .convert("RGB")
+                            .resize(
+                                self.size, resample=3
+                            )  # PIL.Image.Resampling.LANCZOS = 1 PIL.Image.Resampling.BICUBIC = 3
+                        )
+                    )
+
+        video = np.stack(video).astype(np.float32) / 255.0
+        return video
+
+    def __len__(self):
+        return self._total_size
