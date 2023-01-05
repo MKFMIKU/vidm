@@ -69,7 +69,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multipr
 **Note:** The above training script uses all GPUs by default. You can control the to-be-used GPUs by setting the `CUDA_VISIBLE_DEVICES` variable. The `batch-szie` and `workers` are the total numbers, which will be divied by the number of GPUs inner the training script.
 
 
-## Evaluation
+## Testing
 
 1. Download the pre-trained model and place it in ./pretrained_models/
 ```bash
@@ -83,7 +83,21 @@ curl https://www.cis.jhu.edu/~kmei1/share/vidm/checkpoints/checkpoint_accum_clev
 CUDA_VISIBLE_DEVICES=0,1,2,3 python diffusion_ddp_accum_constant_cu.py --multiprocessing-distributed --world-size 1 --rank 0 --batch-size 48 --workers 24
 ```
 
-3. Evaluation with FVD metric. It uses the first GPU card as default, which can changed by setting `CUDA_VISIBLE_DEVICES`.
+
+## Evaluation
+
+For Frechet Video Distance (FVD) and Video Inception Score (VIS) evaluation, we use the reproduced pytorch implementation of [StyleGAN-V](https://github.com/universome/stylegan-v), which can be easily called as 
 ```bash
-python evaluate_FVD.py -dir1 path/to/a/ -dir2 path/to/b/ -b 2 -r 256 -n 128 -ns 2038 -i3d ./i3d_torchscript.pt
+# For FVD
+python scripts/evaluate_FVD.py -dir1 path/to/a/ -dir2 path/to/b/ -b 2 -r 32 -n 128 -ns 16 -i3d ./experiments/i3d_torchscript.pt
+
+# For VIS
+python scripts/evaluate_VIS.py -dir2 ../../datasets/webvid/data/frames/b/ -b 1 -r 128 -n 16 -ns 64 -c3d ./experiments/c3d_ucf101.pt
 ```
+> Note that the previous work like DIGAN also reported VIS but they simply stated it as IS.
+
+> Please refer to [frechet_video_distance.py](frechet_video_distance) and [video_inception_score.py](https://github.com/universome/stylegan-v/blob/master/src/metrics/video_inception_score.py) for the exact details. The used detector weights are available at https://www.dropbox.com/s/ge9e5ujwgetktms/i3d_torchscript.pt?dl=1 and https://www.dropbox.com/s/jxpu7avzdc9n97q/c3d_ucf101.pt?dl=1.
+
+
+
+
