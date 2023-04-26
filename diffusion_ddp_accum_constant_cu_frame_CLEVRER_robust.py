@@ -22,8 +22,8 @@ import torch.utils.data.distributed
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 
-from dddpm.net import ComplexUModel
-from dddpm.mydataset import ImageFolderDataset
+from vidm.network import ComplexUModel
+from vidm.dataset import ImageFolderDataset
 from guided_diffusion.script_util import create_gaussian_diffusion
 
 parser = argparse.ArgumentParser(description="Major options for PyAnole")
