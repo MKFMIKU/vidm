@@ -2,7 +2,7 @@
 
 [Kangfu Mei](https://kfmei.page/) and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/vishal-patel/), Johns Hopkins University, MD, USA
 
-[![paper](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2111.09881)
+[![paper](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2212.00235)
 [![homepage](https://img.shields.io/badge/Project-Page-red)](https://kfmei.page/vidm/)
 
 #### News
